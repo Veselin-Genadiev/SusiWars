@@ -1,5 +1,8 @@
 require "SusiWars/version"
+require 'rubygems'
+require 'bundler/setup'
+require 'sinatra'
 
-module SusiWars
-  # Your code goes here...
+get '/' do
+  'Hello world!'
 end

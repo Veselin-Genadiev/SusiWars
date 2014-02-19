@@ -6,10 +6,10 @@ require 'SusiWars/version'
 Gem::Specification.new do |spec|
   spec.name          = "SusiWars"
   spec.version       = SusiWars::VERSION
-  spec.authors       = ["TODO: Write your name"]
-  spec.email         = ["TODO: Write your email address"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.authors       = ["Veselin Genadiev"]
+  spec.email         = ["genadiev.veselin@gmail.com"]
+  spec.summary       = %q{A quiz game, written with Sinatra and ment to be used by Sofia University members only.}
+  spec.description   = %q{}
   spec.homepage      = ""
   spec.license       = "MIT"
 
