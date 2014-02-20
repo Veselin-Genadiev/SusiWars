@@ -23,7 +23,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "thin"
   spec.add_development_dependency "json"
-  spec.add_development_dependency "net/http"
-  spec.add_development_dependency "uri"
   spec.add_development_dependency "sinatra"
 end
