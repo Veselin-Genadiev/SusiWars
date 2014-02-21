@@ -8,20 +8,26 @@ require 'net/http'
 require 'uri'
 
 class ApplicationServer < Sinatra::Base
-  LOGIN_URI = URI('http://susi.apphb.com/api/login')
-  STUDENT_INFO_URI = URI('http://susi.apphb.com/api/student')
+  LOGIN_URI = URI('http://susi.apphb.com/api/login').freeze
+  STUDENT_INFO_URI = URI('http://susi.apphb.com/api/student').freeze
 
   get '/' do
-    File.read(File.join('public', 'index.html'))
+    if(@request.cookies.has_key?('login_key'))
+      File.read(File.join('public', 'index.html'))
+    else
+      File.read(File.join('public', 'login.html'))
+    end
+
   end
 
   post '/logout' do
-    if(@request.cookies[:login_key])
-      data = { 'key' => @request.cookies[:login_key] }
+    if(@request.cookies.has_key?('login_key'))
+      data = { 'key' => @request.cookies['login_key'] }
       send_delete(LOGIN_URI, data)
-      @response.delete_cookie(:login_key, nil)
-      redirect to('/')
+      @response.delete_cookie('login_key')
     end
+
+    redirect to('/')
   end
 
   post '/login' do
@@ -29,8 +35,8 @@ class ApplicationServer < Sinatra::Base
     response_key = send_post(LOGIN_URI, login_data)
     key_data = { 'key' => response_key.body }
     response_user_info = send_post(STUDENT_INFO_URI, key_data)
-    response_user_info.body
-    @response.set_cookie(:login_key, response_key.body)
+    @response.set_cookie('login_key', response_key.body)
+
     redirect to('/')
   end
 

@@ -3,6 +3,7 @@ require 'rspec'
 require 'thin'
 require 'json'
 require 'sinatra'
+require 'sinatra-contrib'
 
 require 'bundler/gem_tasks'
 

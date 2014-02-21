@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "thin"
   spec.add_development_dependency "json"
   spec.add_development_dependency "sinatra"
+  spec.add_development_dependency "sinatra-contrib"
 end
