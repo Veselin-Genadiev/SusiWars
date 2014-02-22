@@ -7,18 +7,19 @@ require 'sequel'
 require 'json'
 require 'require_all'
 require 'sinatra/sequel'
-require_all 'SusiWars/objects'
 
 set :database, 'sqlite://SusiWars.db'
 
 migration "Create messages table" do
   database.create_table :messages do
+    primary_key :id, :integer, :auto_increment => true
     text        :message
   end
 end
 
 migration "Create players table" do
   database.create_table :players do
+    primary_key :id, :integer, :auto_increment => true
     text        :name
     text        :fn
     integer     :score
@@ -30,8 +31,8 @@ end
 migration "Create games table" do
   database.create_table :games do
     primary_key :id, :integer, :auto_increment => true
-    text        :fn_one
-    text        :fn_two
+    text        :fn_one, default: '0'
+    text        :fn_two, default: '0'
     integer     :result, default: 0
     boolean     :started, default: false
     boolean     :ended, default: false
@@ -40,6 +41,7 @@ end
 
 migration "Create questions table" do
   database.create_table :questions do
+    primary_key :id, :integer, :auto_increment => true
     text        :question
     text        :answer_one
     text        :answer_two
@@ -82,17 +84,37 @@ end
 
 get '/game' do
   game_info = settings.database[:games].filter(:started => false).first
-  current_user = settings.database[:players].filter(:name => @response.cookies['username']).first
-  questions_set = settings.database[:questions].find(:all, :order => rand()).first(5)
-  questions_set = questions_set.map { |question| Question.new(question) }
+  current_user = settings.database[:players].filter(:name => @request.cookies['username']).first
+  questions_set = settings.database[:questions].find(:all).first(5)
 
   if(game_info)
     game_info.set_field(:fn_two, current_user['fn'])
     game_info.set_field(:started, true)
-    erb :game, locals: { questions:  questions_set }
+    erb :game, locals: { game: game_info, questions: questions_set }
   else
-    settings.database[:games].insert(:fn_one => current_user['fn'], :fn_two => 0)
+    settings.database[:games].insert(:fn_one => current_user['fn'])
+    game_info = settings.database[:games].filter(:fn_one => current_user['fn']).first
+    erb :game, locals: { game: game_info, questions: questions_set }
   end
+end
+
+post '/game' do
+  result = params[:result]
+  first_player = settings.database[:players].where(:fn => params[:fn_one]).first
+  second_player = settings.database[:players].where(:fn => params[:fn_two]).first
+
+  if(result < 0)
+    first_player[:score] += 2
+    second_player[:score] -= 1
+  elsif(result == 0)
+    first_player[:score] += 1
+    second_player[:score] += 1
+  else
+    first_player[:score] -= 1
+    second_player[:score] += 2
+  end
+
+  redirect to('/')
 end
 
 post '/logout' do
