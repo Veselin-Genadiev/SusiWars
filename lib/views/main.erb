@@ -2,7 +2,12 @@
   <p><button type="submit" name="logout">Logout</button></p>
 </form>
 
-<div id="chat-wrapper" style="overflow: auto; height: 500px; width: 500px">
+<form method="get" action="game">
+  <p><button type="submit" name="game">Start game</button></p>
+</form>
+
+<div id="chat-wrapper" style="overflow: auto; height: 400px;
+        width: 500px; background-color: black; color: yellow">
     <h3>Live chat!</h3>
     <ul id='chat'></ul>
 </div>
@@ -47,5 +52,5 @@
     });
 </script>
 
-<p><input type="text" id="msg" name="msg" value="" placeholder="type message here..."></p>
+<p><input style="width: 470px" type="text" id="msg" name="msg" value="" placeholder="type message here..."></p>
 <input id="send-message" type="button" value="send">

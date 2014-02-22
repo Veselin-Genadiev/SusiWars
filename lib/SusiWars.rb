@@ -7,7 +7,6 @@ require 'sequel'
 require 'json'
 require 'require_all'
 require 'sinatra/sequel'
-require_all 'SusiWars/objects'
 
 set :database, 'sqlite://SusiWars.db'
 
@@ -22,6 +21,8 @@ migration "Create players table" do
     text        :name
     text        :fn
     integer     :score
+
+    index :fn, :unique => true
   end
 end
 
@@ -30,7 +31,8 @@ STUDENT_INFO_URI = URI('http://susi.apphb.com/api/student').freeze
 
 get '/' do
   halt erb(:login) unless @request.cookies.has_key?('key')
-  erb :main, locals: { user: @request.cookies['username'].gsub(/\W/, '') }
+  erb :main, locals: { user: @request.cookies['username'].gsub(/\W/, ''),
+          players: settings.database[:players].select(:name, :score).all }
 end
 
 post '/read' do
@@ -38,7 +40,9 @@ post '/read' do
 end
 
 post '/write' do
-  settings.database[:messages].insert(:message => JSON.parse(@request.body.read)['msg'])
+  message = JSON.parse(@request.body.read)['msg']
+  settings.database[:messages].insert(:message => message)
+  message
 end
 
 post '/logout' do
@@ -58,6 +62,8 @@ post '/login' do
   key_data = { 'key' => response_key.body }
   response_user_info = JSON.parse(send_post(STUDENT_INFO_URI, key_data).body)
   fn = response_user_info['facultyNumber']
+
+  settings.database[:players].insert(:name => params[:user], :fn => fn, :score => 0)
   @response.set_cookie('username', params[:user])
   @response.set_cookie('key', response_key.body)
 
