@@ -32,7 +32,7 @@ STUDENT_INFO_URI = URI('http://susi.apphb.com/api/student').freeze
 get '/' do
   halt erb(:login) unless @request.cookies.has_key?('key')
   erb :main, locals: { user: @request.cookies['username'].gsub(/\W/, ''),
-          players: settings.database[:players].select(:name, :score).all }
+          players: settings.database[:players].select(:name, :score).map([:name, :score]) }
 end
 
 post '/read' do

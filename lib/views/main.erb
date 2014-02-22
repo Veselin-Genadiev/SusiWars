@@ -6,12 +6,28 @@
   <p><button type="submit" name="game">Start game</button></p>
 </form>
 
-<div id="chat-wrapper" style="overflow: auto; height: 400px;
-        width: 500px; background-color: black; color: yellow">
-    <h3>Live chat!</h3>
-    <ul id='chat'></ul>
-</div>
+<div style="width: 700px">
+    <div id="chat-wrapper" style="float: left; overflow: auto; height: 400px;
+            width: 500px; background-color: black; color: yellow">
+        <h3>Live chat!</h3>
+        <ul id='chat'></ul>
+    </div>
+    <div style="float: left">
+      <p><input style="width: 470px" type="text" id="msg" name="msg" value="" placeholder="type message here..."></p>
+      <input id="send-message" type="button" value="send">
+    </div>
 
+    <div style="float: right">
+      <h2>Users:</h2>
+      <ul>
+        <%=
+           '<li>' + players.map do |tuple|
+                "#{tuple[0]}: #{tuple[1]}"
+             end.join('</li><li>') + '</li>'
+        %>
+      </ul>
+    </div>
+</div>
 <script>
     // reading
     $(document).ready(function () {
@@ -51,6 +67,3 @@
         setInterval(read, 500);
     });
 </script>
-
-<p><input style="width: 470px" type="text" id="msg" name="msg" value="" placeholder="type message here..."></p>
-<input id="send-message" type="button" value="send">
