@@ -26,6 +26,27 @@ migration "Create players table" do
   end
 end
 
+migration "Create games table" do
+  database.create_table :games do
+    text        :fn_one
+    text        :fn_two
+    integer     :result, default: 0
+    boolean     :started, default: false
+    boolean     :ended, default: false
+  end
+end
+
+migration "Create questions table" do
+  database.create_table :questions do
+    text        :question
+    text        :answer_one
+    text        :answer_two
+    text        :answer_three
+    text        :answer_four
+    integer     :correct_answer_index
+  end
+end
+
 LOGIN_URI = URI('http://susi.apphb.com/api/login').freeze
 STUDENT_INFO_URI = URI('http://susi.apphb.com/api/student').freeze
 
