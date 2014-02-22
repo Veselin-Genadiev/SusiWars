@@ -5,4 +5,8 @@ describe 'SusiWars' do
     get '/'
     last_response.should be_ok
   end
+
+  it 'shouldn\'t have "username" and "key" cookies on logout' do
+    #post '/logout'
+  end
 end
