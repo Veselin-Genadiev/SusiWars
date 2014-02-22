@@ -1,4 +1,4 @@
-require File.expand_path '../helper_spec.rb', __FILE__
+require File.expand_path '../spec_helper.rb', __FILE__
 
 describe 'Chat' do
   before_adding_message = nil
@@ -16,6 +16,6 @@ describe 'Chat' do
 
   it 'should have only one message in advance after "/write" post' do
     post '/read'
-    last_response.should.eql? before_adding_message + '\nwhatever'
+    last_response.should.eql? before_adding_message.body + '\nwhatever'
   end
 end

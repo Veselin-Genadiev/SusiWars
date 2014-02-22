@@ -1,4 +1,4 @@
-require File.expand_path '../helper_spec.rb', __FILE__
+require File.expand_path '../spec_helper.rb', __FILE__
 
 describe 'SusiWars' do
   it 'should allow accessing the home page' do
