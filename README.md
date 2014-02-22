@@ -25,6 +25,10 @@ Type:
 
     $ruby SusiWars.rb
 
+To execute unit tests just type
+
+    $rake
+
 for now you can only enjoy chatting with other users and login/logout :D.
 
 ## Contributing
