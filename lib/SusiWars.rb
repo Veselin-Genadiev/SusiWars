@@ -60,7 +60,7 @@ post '/login' do
   login_data = { 'username' => params[:user], 'password' => params[:password] }
   response_key = send_post(LOGIN_URI, login_data)
 
-  if(!response_key.body['key'])
+  if(response_key.code[0] != '2')
     redirect to('/')
   end
 
@@ -68,7 +68,10 @@ post '/login' do
   response_user_info = JSON.parse(send_post(STUDENT_INFO_URI, key_data).body)
   fn = response_user_info['facultyNumber']
 
-  settings.database[:players].insert(:name => params[:user], :fn => fn, :score => 0)
+  if(!settings.database[:players].select(:fn).map(:fn).include?(fn))
+    settings.database[:players].insert(:name => params[:user], :fn => fn, :score => 0)
+  end
+
   @response.set_cookie('username', params[:user])
   @response.set_cookie('key', response_key.body)
 
