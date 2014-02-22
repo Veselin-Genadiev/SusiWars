@@ -66,6 +66,17 @@ post '/write' do
   message
 end
 
+get '/add_question' do
+  erb :add_question
+end
+
+post '/add_question' do
+  settings.database[:questions].insert(:question => params['question'], :answer_one => params['answer_one'],
+  :answer_two => params['answer_two'], :answer_three => params['answer_three'],
+  :answer_four => params['answer_four'], :correct_answer_index => Integer(params['correct_answer_index']))
+  redirect to('/')
+end
+
 post '/logout' do
   if(@request.cookies.has_key?('key'))
     data = { 'key' => @request.cookies['key'] }
