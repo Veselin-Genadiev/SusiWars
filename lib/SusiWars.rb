@@ -7,6 +7,7 @@ require 'sequel'
 require 'json'
 require 'require_all'
 require 'sinatra/sequel'
+require_all 'SusiWars/objects'
 
 set :database, 'sqlite://SusiWars.db'
 
@@ -28,6 +29,7 @@ end
 
 migration "Create games table" do
   database.create_table :games do
+    primary_key :id, :integer, :auto_increment => true
     text        :fn_one
     text        :fn_two
     integer     :result, default: 0
@@ -74,7 +76,23 @@ post '/add_question' do
   settings.database[:questions].insert(:question => params['question'], :answer_one => params['answer_one'],
   :answer_two => params['answer_two'], :answer_three => params['answer_three'],
   :answer_four => params['answer_four'], :correct_answer_index => Integer(params['correct_answer_index']))
+
   redirect to('/')
+end
+
+get '/game' do
+  game_info = settings.database[:games].filter(:started => false).first
+  current_user = settings.database[:players].filter(:name => @response.cookies['username']).first
+  questions_set = settings.database[:questions].find(:all, :order => rand()).first(5)
+  questions_set = questions_set.map { |question| Question.new(question) }
+
+  if(game_info)
+    game_info.set_field(:fn_two, current_user['fn'])
+    game_info.set_field(:started, true)
+    erb :game, locals: { questions:  questions_set }
+  else
+    settings.database[:games].insert(:fn_one => current_user['fn'], :fn_two => 0)
+  end
 end
 
 post '/logout' do
