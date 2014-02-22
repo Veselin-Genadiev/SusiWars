@@ -1,9 +1,5 @@
-require 'rake'
-require 'rspec'
-require 'thin'
-require 'json'
-require 'sinatra'
-require 'sinatra-contrib'
+require 'lib/SusiWars.rb'
+require 'sinatra/activerecord/rake'
 
 require 'bundler/gem_tasks'
 

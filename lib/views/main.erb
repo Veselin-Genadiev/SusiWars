@@ -1,0 +1,51 @@
+<form method="post" action="logout">
+  <p><button type="submit" name="logout">Logout</button></p>
+</form>
+
+<div id="chat-wrapper" style="overflow: auto; height: 500px; width: 500px">
+    <h3>Live chat!</h3>
+    <ul id='chat'></ul>
+</div>
+
+<script>
+    // reading
+    $(document).ready(function () {
+        function read() {
+            $.ajax({
+                url: '/read',
+                type: 'POST'
+            }).done(function (ev) {
+
+                if(ev){
+                    $("#chat").html("");
+                    var lines = ev.split('\\n');
+                    for (var i = 0; i < lines.length; i++) {
+                        $("#chat").append("<li>" + lines[i] + "</li>");
+                    }
+                }
+
+                $("#chat-wrapper").animate({ scrollTop: $("#chat-wrapper").prop("scrollHeight") }, 3000);
+            });
+        }
+
+        // writing
+        $('#send-message').click(function(ev){
+            ev.preventDefault();
+
+            $.ajax({
+                url: '/write',
+                contentType: 'application/json',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({ msg: "<%= user %>: " + $('#msg').val() })
+            }).done(function(){
+                $('#msg').value('')
+            });
+        });
+
+        setInterval(read, 500);
+    });
+</script>
+
+<p><input type="text" id="msg" name="msg" value="" placeholder="type message here..."></p>
+<input id="send-message" type="button" value="send">
