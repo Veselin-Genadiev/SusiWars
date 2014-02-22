@@ -59,6 +59,11 @@ end
 post '/login' do
   login_data = { 'username' => params[:user], 'password' => params[:password] }
   response_key = send_post(LOGIN_URI, login_data)
+
+  if(!response_key.body['key'])
+    redirect to('/')
+  end
+
   key_data = { 'key' => response_key.body }
   response_user_info = JSON.parse(send_post(STUDENT_INFO_URI, key_data).body)
   fn = response_user_info['facultyNumber']
