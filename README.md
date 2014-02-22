@@ -1,8 +1,10 @@
 # SusiWars
 
-TODO: Write a gem description
+This is a sinatra(ruby) application, which uses info from SUSI (Sofia University system) to
+log in. It should be a simple quiz game, similar to the FMI christmas quiz.
+It is in initial state and through now only a chat is implemented.
 
-## Installation
+## Installation (not sure if it is really needed)
 
 Add this line to your application's Gemfile:
 
@@ -18,9 +20,16 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Go to terminal and change directory to the project's lib folder.
+Type:
+
+    $ruby SusiWars.rb
+
+for now you can only enjoy chatting with other users and login/logout :D.
 
 ## Contributing
+If you think my idea for the application is cool you could always send pull requests to improve it. :)
+To do so:
 
 1. Fork it ( http://github.com/<my-github-username>/SusiWars/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)

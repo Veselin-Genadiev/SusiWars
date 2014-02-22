@@ -1,4 +1,4 @@
-require 'SusiWars/version'
+require './SusiWars/version'
 require 'rubygems'
 require 'bundler/setup'
 require 'sinatra'
