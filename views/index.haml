@@ -1,0 +1,13 @@
+!!!
+%html
+  %head
+    %title Susi Wars
+    %meta{charset: 'utf-8'}
+    %link{rel: 'stylesheet', href: '/styles.css'}
+  %body
+    %header
+      %h1 Susi Wars
+      -if @user_info
+        = haml :content
+      -else
+        = haml :login

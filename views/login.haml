@@ -1,0 +1,11 @@
+.login
+  %div
+    %h2 Login to Susi
+    %form{method: 'post', action:'/login'}
+      %p
+        %input{type: 'text', name: 'login', value: '', placeholder: 'Username'}
+      %p
+        %input{type: 'password', name: 'password', value: '', placeholder: 'Password'}
+      .submit
+        %p
+          %input{type: 'submit', name: 'commit', value: 'Login'}
