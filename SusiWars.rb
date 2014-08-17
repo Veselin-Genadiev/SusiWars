@@ -4,6 +4,8 @@ require 'haml'
 require 'json'
 require 'net/http'
 
+set connections: []
+
 LOGIN_URI = URI('http://susi.apphb.com/api/login').freeze
 STUDENT_INFO_URI = URI('http://susi.apphb.com/api/student').freeze
 
@@ -24,10 +26,8 @@ def send_post(uri, data)
 end
 
 get '/' do
-  #user_info should point to the entry in the database.
-  @user_info = cookies[:faculty_number]
+  @user_info = JSON.parse(cookies[:user_info])
   @login_key = cookies[:key]
-  #check if login_key has expired.
   haml :index
 end
 
@@ -40,11 +40,20 @@ post '/login' do
   end
 
   authentication_data = { key: login_response.body }
-  authentication_response = JSON.parse(send_post(STUDENT_INFO_URI,
-                                                 authentication_data).body)
-  faculty_number = authentication_response['facultyNumber']
-
-  @response.set_cookie('faculty_number', faculty_number)
+  authentication_response = send_post(STUDENT_INFO_URI, authentication_data).body
+  @response.set_cookie('user_info', authentication_response)
   @response.set_cookie('key', login_response.body)
   redirect '/'
+end
+
+get '/stream', provides: 'text/event-stream' do
+  stream :keep_open do |out|
+    settings.connections << out
+    out.callback { settings.connections.delete(out) }
+  end
+end
+
+post '/' do
+  settings.connections.each { |out| out << "data: #{params[:msg]}\n\n" }
+  204 # response without entity body
 end

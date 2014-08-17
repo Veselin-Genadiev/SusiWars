@@ -1,0 +1,27 @@
+%div{class: 'chat_content'}
+  %textarea{rows: '20', cols: '69', id: 'chat',
+            readonly: 'readonly', autofocus: 'autofocus'}
+
+  %form{id: 'chat_message', action: '#'}
+  %input{id: 'msg', placeholder: 'type message here...'}
+  %input{type: 'submit', value: 'send'}
+
+  :javascript
+    $(document).ready(function() {
+
+      // reading
+      var es = new EventSource('/stream');
+      es.addEventListener('message', function(e) {
+        $('#chat').append(e.data + "\n");
+        $('#chat').scrollTop($('#chat')[0].scrollHeight);
+      });
+
+      //writing
+      $('#chat_message').submit(function(e){
+        e.preventDefault();
+        $.post('/', {msg: "#{@user_info['firstName']} #{@user_info['lastName']}: "
+                           + $('#msg').val()});
+        $('#msg').val(''); $('#msg').focus();
+        $('#chat').scrollTop($('#chat')[0].scrollHeight);
+      });
+    });
