@@ -26,7 +26,7 @@ def send_post(uri, data)
 end
 
 get '/' do
-  @user_info = JSON.parse(cookies[:user_info])
+  @user_info = JSON.parse(cookies[:user_info]) if cookies[:user_info]
   @login_key = cookies[:key]
   haml :index
 end
