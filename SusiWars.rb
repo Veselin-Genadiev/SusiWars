@@ -3,6 +3,7 @@ require 'sinatra/contrib'
 require 'haml'
 require 'json'
 require 'net/http'
+require 'data_mapper'
 
 set connections: []
 

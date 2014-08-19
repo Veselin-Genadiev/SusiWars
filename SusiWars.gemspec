@@ -1,11 +1,10 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'SusiWars/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "SusiWars"
-  spec.version       = SusiWars::VERSION
+  spec.version       = "0.1"
   spec.authors       = ["Veselin Genadiev"]
   spec.email         = ["genadiev.veselin@gmail.com"]
   spec.summary       = %q{A quiz game, written with Sinatra and ment to be used by Sofia University members only.}
@@ -19,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler"
+  spec.add_development_dependency "data_mapper"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "slim"
