@@ -5,7 +5,7 @@ require 'json'
 require 'net/http'
 require 'data_mapper'
 
-set connections: []
+set server: 'thin', connections: []
 
 LOGIN_URI = URI('http://susi.apphb.com/api/login').freeze
 STUDENT_INFO_URI = URI('http://susi.apphb.com/api/student').freeze
@@ -47,14 +47,14 @@ post '/login' do
   redirect '/'
 end
 
-get '/stream', provides: 'text/event-stream' do
+get '/chat', provides: 'text/event-stream' do
   stream :keep_open do |out|
     settings.connections << out
     out.callback { settings.connections.delete(out) }
   end
 end
 
-post '/' do
+post '/chat' do
   settings.connections.each { |out| out << "data: #{params[:msg]}\n\n" }
   204 # response without entity body
 end

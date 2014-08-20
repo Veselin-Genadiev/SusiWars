@@ -7,4 +7,6 @@ class Question
   property :third_answer, String
   property :fourth_answer, String
   property :correct_answer, String
+
+  belongs_to :game
 end

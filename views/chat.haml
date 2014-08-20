@@ -8,9 +8,9 @@
 
   :javascript
     $(document).ready(function() {
-
       // reading
-      var es = new EventSource('/stream');
+      var url = '/chat';
+      var es = new EventSource(url);
       es.addEventListener('message', function(e) {
         $('#chat').append(e.data + "\n");
         $('#chat').scrollTop($('#chat')[0].scrollHeight);
@@ -19,8 +19,8 @@
       //writing
       $('#chat_message').submit(function(e){
         e.preventDefault();
-        $.post('/', {msg: "#{@user_info['firstName']} #{@user_info['lastName']}: "
-                           + $('#msg').val()});
+        $.post(url, {msg: "#{@user_info['firstName']} #{@user_info['lastName']}: "
+          + $('#msg').val()});
         $('#msg').val('');
         $('#msg').focus();
         $('#chat').scrollTop($('#chat')[0].scrollHeight);

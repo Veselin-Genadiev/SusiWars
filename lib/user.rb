@@ -5,4 +5,6 @@ class User
   property :user_name, String
   property :permission, String
   property :score, Integer
+
+  belongs_to :game
 end
