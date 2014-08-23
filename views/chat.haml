@@ -2,27 +2,34 @@
   %textarea{rows: '20', cols: '69', id: 'chat',
             readonly: 'readonly', autofocus: 'autofocus'}
 
-  %form{id: 'chat_message', action: '#'}
-    %input{id: 'msg', placeholder: 'type message here...'}
+  %form{id: 'chat_form', action: '#'}
+    %input{id: 'msg', placeholder: 'type message here...', autocomplete: 'off'}
     %input{type: 'submit', value: 'send'}
 
   :javascript
     $(document).ready(function() {
+      var scheme = "ws://";
+      var uri = scheme + window.document.location.host + "/";
+      var clientURL = window.document.URL;
+      var ws = new WebSocket(uri);
+
       // reading
-      var url = '/chat';
-      var es = new EventSource(url);
-      es.addEventListener('message', function(e) {
-        $('#chat').append(e.data + "\n");
+      ws.onmessage = function(message) {
+        var data = JSON.parse(message.data);
+        $('#chat').append(data.text + "\n");
         $('#chat').scrollTop($('#chat')[0].scrollHeight);
-      }, false);
+      }
 
       //writing
-      $('#chat_message').submit(function(e){
+      $('#chat_form').submit(function(e){
         e.preventDefault();
-        $.post(url, {msg: "#{@user_info['firstName']} #{@user_info['lastName']}: "
-          + $('#msg').val()});
-        $('#msg').val('');
-        $('#msg').focus();
-        $('#chat').scrollTop($('#chat')[0].scrollHeight);
+        var text = "#{@user_info['firstName']} #{@user_info['lastName']}: "
+                    + $('#msg').val();
+
+        if($('#msg').val() != '') {
+          $('#msg').val('');
+          $('#msg').focus();
+          ws.send(JSON.stringify({text: text, url: clientURL}));
+        }
       });
     });

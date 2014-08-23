@@ -7,9 +7,9 @@
     %script{src: 'http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js'}
     %script{src: '//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'}
   %body
-    %header
+    %div{class: 'page-header'}
       %h1 Susi Wars
-      -if @user_info && @login_key
-        = haml :content
-      -else
-        = haml :login
+    -if @user_info && @login_key
+      = haml :content
+    -else
+      = haml :login
