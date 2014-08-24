@@ -1,16 +1,2 @@
-%ul{class: 'nav nav-pills nav-justified", role: "tablist'}
-  %li{class: 'active'}
-    %a{href: '/'} Home
-  %li{class: 'active'}
-    %a{href: 'room'} New room
-  %li{class: 'dropdown'}
-    %a{class: 'dropdown-toggle', 'data-toggle' => 'dropdown', href: '#'}
-      Add a/an:
-      %span{class: 'caret'}
-    %ul{class: 'dropdown-menu', role: 'menu'}
-      %li{class: 'active'}
-        %a{href: '/admin'} Admin
-      %li{class: 'active'}
-        %a{href: '/question'} Question
 = haml :chat
 = haml :game_list

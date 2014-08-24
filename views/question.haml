@@ -1,0 +1,38 @@
+= haml :header
+= haml :nav
+%form{method: 'post', action: '/question'}
+  %p
+    %input{type: 'text', name: 'question', value: '', placeholder: 'Question'}
+  %p
+    %input{type: 'text', name: 'first_answer', id: 'first_answer',
+           value: '', placeholder: 'First answer'}
+  %p
+    %input{type: 'text', name: 'second_answer', id: 'second_answer',
+           value: '', placeholder: 'Second answer'}
+  %p
+    %input{type: 'text', name: 'third_answer', id: 'third_answer',
+           value: '', placeholder: 'Third answer'}
+  %p
+    %input{type: 'text', name: 'fourth_answer', id: 'fourth_answer',
+           value: '', placeholder: 'Fourth answer'}
+  %select{id: 'answers', name: 'correct_answer', placeholder: 'correct_answer',
+          style: 'width: 133px'}
+  %input{type: 'submit', value: 'Add'}
+
+:javascript
+  $(document).ready(function() {
+    $("#answers").select2();
+    function update_answers() {
+      var dropdown = $('#answers')[0];
+      dropdown.options[0] = new Option('first answer', $('#first_answer').val());
+      dropdown.options[1] = new Option('second answer', $('#second_answer').val());
+      dropdown.options[2] = new Option('third answer', $('#third_answer').val());
+      dropdown.options[3] = new Option('fourth answer', $('#fourth_answer').val());
+    }
+    var inputIds = ['#first_answer', '#second_answer', '#third_answer', '#fourth_answer'];
+
+    for(var inputId in inputIds) {
+      $(inputIds[inputId]).change(update_answers);
+    }
+  });
+

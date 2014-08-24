@@ -1,19 +1,32 @@
-require 'user'
-
 class UserFactory
-  def self.new_user(user_name)
-    User.create(user_name: user_name, permission: 'user', score: 0)
+  def self.user(username)
+    User.first_or_create({ username: username },
+                         { permission: 'user', score: "0" })
   end
 
-  def self.new_admin(user_name)
-    User.create(user_name: user_name, permission: 'admin', score: 0)
+  def self.admin(username)
+    @user = User.first_or_create({ username: username },
+                                 {permission: 'admin', score: "0" })
+    @user.update(permission: 'admin')
+    @user
   end
 
-  def self.new_bash_admin(user_name)
-    User.create(user_name: user_name, permission: 'bash_admin', score: 0)
+  def self.bash_admin(username)
+    @user = User.first_or_create({ username: username },
+                                 { permission: 'bash_admin', score: "0" })
+    @user.update(permission: 'bash_admin')
+    @user
   end
 
-  def self.get_user(user_name)
-    User.get(user_name: user_name)
+  def self.users
+    User.all(permission: 'user')
+  end
+
+  def self.admins
+    User.all(permission: 'admin')
+  end
+
+  def self.bash_admins
+    User.all(permission: 'bash_admin')
   end
 end

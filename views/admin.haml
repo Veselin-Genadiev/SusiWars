@@ -1,0 +1,9 @@
+= haml :header
+= haml :nav
+%form{method: 'post', action: '/admin'}
+  %select{id: 'users', name: 'username'}
+    - @users.each do |user|
+      %option{value: "#{user.username}"} #{@user.username}
+  %input{type: 'submit', value: 'Make that bastard an admin'}
+:javascript
+  $(document).ready(function() { $("#users").select2(); });

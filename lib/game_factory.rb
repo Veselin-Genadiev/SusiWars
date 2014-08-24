@@ -1,7 +1,4 @@
-require 'question'
-require 'user'
-require 'game'
-require 'user_factory'
+require_relative 'user_factory'
 
 class GameFactory
   def self.create_game(first_user_name, second_user_name)
