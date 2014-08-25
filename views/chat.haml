@@ -1,5 +1,6 @@
-%div{id: 'chat_container'}
-  %textarea{rows: '20', cols: '69', id: 'chat',
+%div{id: 'chat_container',
+     style: 'float: left; width: 50%; height: 400px'}
+  %textarea{id: 'chat', style: 'resize: none; width: 100%; height: 100%;',
             readonly: 'readonly', autofocus: 'autofocus'}
 
   %form{id: 'chat_form', action: '#'}
@@ -10,14 +11,15 @@
     $(document).ready(function() {
       var scheme = "ws://";
       var uri = scheme + window.document.location.host + "/";
-      var clientURL = window.document.URL;
       var ws = new WebSocket(uri);
 
       // reading
       ws.onmessage = function(message) {
-        var data = JSON.parse(message.data);
-        $('#chat').append(data.text + "\n");
-        $('#chat').scrollTop($('#chat')[0].scrollHeight);
+        if(data.is_chat_message && data.game == getCookie('game')) {
+          var data = JSON.parse(message.data);
+          $('#chat').append(data.text + "\n");
+          $('#chat').scrollTop($('#chat')[0].scrollHeight);
+        }
       }
 
       //writing
@@ -29,7 +31,12 @@
         if($('#msg').val() != '') {
           $('#msg').val('');
           $('#msg').focus();
-          ws.send(JSON.stringify({text: text, url: clientURL}));
+          ws.send(JSON.stringify({text: text, is_chat_message: true, game: getCookie('game')}));
         }
+      });
+
+      //Updating game list
+      $('#new_game').click(function(){
+        ws.send(JSON.stringify({game_created: true}));
       });
     });

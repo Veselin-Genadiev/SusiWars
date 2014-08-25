@@ -1,0 +1,39 @@
+%ul{class: 'list-group', id: 'game_list',
+    style: 'float: right; overflow: auto; width: 50%; height: 400px'}
+
+:javascript
+  $(document).ready(function() {
+    var scheme = "ws://";
+    var uri = scheme + window.document.location.host + "/";
+    var ws = new WebSocket(uri);
+
+    function updateGameList() {
+      $.get('/game_list', function(data) {
+        var games = JSON.parse(data);
+        $('#game_list').html('');
+        $('#game_list').append($('<h3/>').append('Game List'));
+
+        for(game in games) {
+          var paragraph = $('<a/>').attr('href', '/game?id=' + games[game].id)
+                                   .append(games[game].owner);
+          var listItem = $('<li/>').addClass('list-group-tem').append(paragraph);
+
+          paragraph.click(function(e) {
+            document.cookie = 'game=' + game.id;
+            ws.send(JSON.stringify({game_joined: game.id}));
+          });
+
+          $('#game_list').append(listItem);
+        }
+      });
+    }
+
+    updateGameList();
+    ws.onmessage = function(message) {
+      var messageData = JSON.parse(message.data);
+
+      if(messageData.game_created || messageData.game_joined) {
+        updateGameList();
+      }
+    }
+  });

@@ -5,5 +5,8 @@
     - @users.each do |user|
       %option{value: "#{user.username}"} #{@user.username}
   %input{type: 'submit', value: 'Make that bastard an admin'}
+
 :javascript
-  $(document).ready(function() { $("#users").select2(); });
+  $(document).ready(function() {
+    $("#users").select2();
+  });

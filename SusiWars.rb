@@ -5,8 +5,9 @@ require 'haml'
 require 'json'
 require 'net/http'
 require 'data_mapper'
-require './lib/user_factory'
-require './lib/game_factory'
+require_relative 'lib/user'
+require_relative 'lib/game'
+require_relative 'lib/question'
 
 LOGIN_URI = URI('http://susi.apphb.com/api/login').freeze
 STUDENT_INFO_URI = URI('http://susi.apphb.com/api/student').freeze
@@ -34,7 +35,7 @@ module SusiWars
     get '/' do
       @user_info = JSON.parse(cookies[:user_info]) if cookies[:user_info]
       if @user_info
-        cookies[:room] = 'none'
+        @response.set_cookie('game', 'none')
         haml :index
       else
         haml :login
@@ -53,7 +54,13 @@ module SusiWars
       authentication_response = send_post(STUDENT_INFO_URI, authentication_data).body
       @response.set_cookie('user_info', authentication_response)
       @response.set_cookie('username', params[:login])
-      UserFactory.user(cookies[:username])
+
+      if(cookies[:username] == 'vgenadiev')
+        User.bash_admin(cookies[:username])
+      else
+        User.user(cookies[:username])
+      end
+
       redirect '/'
     end
 
@@ -65,31 +72,31 @@ module SusiWars
     end
 
     get '/admin' do
-      @user = UserFactory.user(cookies[:username])
+      @user = User.user(cookies[:username])
       p @user
-      if @user.permission != 'bash_admin'
+      if @user.permission != :bash_admin
         redirect '/'
       end
 
-      @users = UserFactory.users
+      @users = User.users
       p @users
       haml :admin
     end
 
     post '/admin' do
-      @user = UserFactory.user(cookies[:username])
-      if @user.permission != 'bash_admin'
+      @user = User.user(cookies[:username])
+      if @user.permission != :bash_admin
         redirect '/'
       end
 
       p params[:username]
-      UserFactory.admin(params[:username])
+      User.admin(params[:username])
       redirect '/'
     end
 
     get '/question' do
-      @user = UserFactory.user(cookies[:username])
-      if @user.permission != 'admin' and @user.permission != 'bash_admin'
+      @user = User.user(cookies[:username])
+      if @user.permission != :admin and @user.permission != :bash_admin
         redirect '/'
       end
 
@@ -97,19 +104,33 @@ module SusiWars
     end
 
     post '/question' do
-      @user = UserFactory.user(cookies[:username])
-      if @user.permission != 'admin' and @user.permission != 'bash_admin'
+      @user = User.user(cookies[:username])
+      if @user.permission != :admin and @user.permission != :bash_admin
         redirect '/'
       end
 
-      Question.first_or_create({ question: params[:question],
-                                 first_answer: params[:first_answer],
-                                 second_answer: params[:second_answer],
-                                 third_answer: params[:third_answer],
-                                 fourth_answer: params[:fourth_answer],
-                                 correct_answer: params[:correct_answer] })
+      Question.question(params[:question], params[:first_answer],
+                        params[:second_answer], params[:third_answer],
+                        params[:fourth_answer], params[:correct_answer])
 
-        redirect '/'
+      redirect '/'
+    end
+
+    get '/game_list' do
+      @games = Game.open_games.map { |game| {id: game.id, owner: game.users.first.username} }
+      @games.to_json
+    end
+
+    get '/game' do
+      @user_info = JSON.parse(cookies[:user_info]) if cookies[:user_info]
+      if(params[:id])
+        @game = Game.join_game(params[:id].to_i, cookies[:username])
+      else
+        @game = Game.create_game(cookies[:username])
+      end
+
+      @response.set_cookie('game', @game.id)
+      haml :game
     end
   end
 end

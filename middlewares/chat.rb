@@ -20,14 +20,7 @@ module SusiWars
         end
 
         ws.on :message do |event|
-          @room = CGI::Cookie.parse(ws.env['HTTP_COOKIE'])['room']
-          @clients.each do |client|
-            @client_room = CGI::Cookie.parse(client.env['HTTP_COOKIE'])['room']
-            if @client_room  == @room
-              p [@client_room, @room]
-              client.send(event.data)
-            end
-          end
+          @clients.each { |client| client.send(event.data) }
         end
 
         ws.on :close do |event|
