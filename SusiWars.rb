@@ -118,6 +118,7 @@ module SusiWars
 
     get '/game_list' do
       @games = Game.open_games.map { |game| {id: game.id, owner: game.users.first.username} }
+      #@games = @games.select { |game| game.owner != cookies[:username] }
       @games.to_json
     end
 
@@ -131,6 +132,16 @@ module SusiWars
 
       @response.set_cookie('game', @game.id)
       haml :game
+    end
+
+    post '/game' do
+      Game.update_users_score(params[:id].to_i)
+    end
+
+    post '/answer' do
+      if Question.correct_answer(params[:question_id].to_i, params[:answer])
+        Game.update_result(params[:id].to_i, cookies[:username])
+      end
     end
   end
 end

@@ -15,7 +15,9 @@
 
       // reading
       ws.onmessage = function(message) {
-        if(data.is_chat_message && data.game == getCookie('game')) {
+        var data = JSON.parse(message.data);
+
+        if(data && data.is_chat_message && data.game == getCookie('game')) {
           var data = JSON.parse(message.data);
           $('#chat').append(data.text + "\n");
           $('#chat').scrollTop($('#chat')[0].scrollHeight);
@@ -33,10 +35,5 @@
           $('#msg').focus();
           ws.send(JSON.stringify({text: text, is_chat_message: true, game: getCookie('game')}));
         }
-      });
-
-      //Updating game list
-      $('#new_game').click(function(){
-        ws.send(JSON.stringify({game_created: true}));
       });
     });

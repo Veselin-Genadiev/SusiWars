@@ -8,6 +8,18 @@ class User
 
   belongs_to :game, required: false
 
+  def add_win
+    self.score += 2
+    self.save
+    self
+  end
+
+  def add_draw
+    self.score += 1
+    self.save
+    self
+  end
+
   def self.user(username)
     User.first_or_create({ username: username },
                          { permission: :user, score: 0 })

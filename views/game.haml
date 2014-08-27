@@ -1,4 +1,76 @@
 = haml :header
 = haml :nav
 = haml :chat
+%div{id: 'question_container', style: 'float: right; height: 100%; width: 50%;'}
 
+:javascript
+  $(document).ready(function() {
+
+    function sendGameResult(gameId) {
+      return function() {
+        $('#question_container').html('');
+        $.post('/game', {id: '#{@game.id}'}, function() {
+          alert('game over');
+        });
+      }
+    }
+
+    function sendAnswer(questionId, answer, item) {
+      return function() {
+        item.addClass('active');
+        $.post('/answer', {id: '#{@game.id}', question_id: questionId, answer: answer}, function() {
+          $('#question_container').html('');
+        });
+      }
+    }
+
+
+    function askQuestion(questionId, question, answers) {
+      return function() {
+        var questionContainer = $('#question_container');
+        questionContainer.html('');
+        var questionsForm = $('<div/>').addClass('list-group');
+        var questionItem = $('<a/>').addClass('list-group-item').append(question);
+        questionsForm.append(questionItem);
+        for(var answer in answers) {
+          var answerItem = $('<a/>').addClass('list-group-item').append(answers[answer]);
+          answerItem.attr('href', '#');
+          answerItem.click(sendAnswer(questionId, answers[answer], answerItem));
+          questionsForm.append(answerItem);
+          questionContainer.append(questionsForm);
+        }
+      }
+    }
+
+    var scheme = "ws://";
+    var uri = scheme + window.document.location.host + "/";
+    var ws = new WebSocket(uri);
+    var gameId = window.document.location.search.split('id=')[1];
+
+    ws.onopen = function() {
+      if(gameId) {
+        ws.send(JSON.stringify({game_joined: gameId}));
+      }
+      else {
+        ws.send(JSON.stringify({game_created: true}));
+      }
+    }
+
+    ws.onmessage = function(message) {
+      var data = JSON.parse(message.data);
+
+      if(data && data.game_joined && data.game_joined == getCookie('game')) {
+        #{
+          @game.questions.map do |question|
+            "setTimeout(askQuestion('#{question.id}', '#{question.question}', [
+                                    '#{question.first_answer}',
+                                    '#{question.second_answer}',
+                                    '#{question.third_answer}',
+                                    '#{question.fourth_answer}']),
+                                    #{(@game.questions.index(question) + 1) * 5000});"
+          end.join('\n') + "\n" + "setTimeout(sendGameResult(#{@game.id}),
+                                              #{(@game.questions.count + 1) * 5000})"
+        }
+      }
+    }
+  });

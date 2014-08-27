@@ -11,13 +11,17 @@ class Question
 
   belongs_to :game, required: false
 
-  def question(question, first_answer, second_anser, third_answer,
-               fourth_answer, correct_answer)
-    Question.first_or_create({ question: params[:question],
-                               first_answer: params[:first_answer],
-                               second_answer: params[:second_answer],
-                               third_answer: params[:third_answer],
-                               fourth_answer: params[:fourth_answer],
-                               correct_answer: params[:correct_answer] })
+  def self.correct_answered(question_id, answer)
+    Question.first(id: question_id).correct_answer == answer
+  end
+
+  def self.question(question, first_answer, second_anser, third_answer,
+                    fourth_answer, correct_answer)
+    Question.first_or_create({ question: question,
+                               first_answer: first_answer,
+                               second_answer: second_answer,
+                               third_answer: third_answer,
+                               fourth_answer: fourth_answer,
+                               correct_answer: correct_answer })
   end
 end

@@ -18,11 +18,6 @@
                                    .append(games[game].owner);
           var listItem = $('<li/>').addClass('list-group-tem').append(paragraph);
 
-          paragraph.click(function(e) {
-            document.cookie = 'game=' + game.id;
-            ws.send(JSON.stringify({game_joined: game.id}));
-          });
-
           $('#game_list').append(listItem);
         }
       });
@@ -30,9 +25,9 @@
 
     updateGameList();
     ws.onmessage = function(message) {
-      var messageData = JSON.parse(message.data);
+      var data = JSON.parse(message.data);
 
-      if(messageData.game_created || messageData.game_joined) {
+      if(data.game_created || data.game_joined) {
         updateGameList();
       }
     }
