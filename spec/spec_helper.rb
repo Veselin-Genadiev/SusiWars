@@ -1,6 +1,4 @@
-require 'rubygems'
 require 'bundler'
-Bundler.setup(:default, :test)
 require 'sinatra'
 require 'rspec'
 require 'rack/test'
@@ -11,7 +9,7 @@ Sinatra::Base.set :run, false
 Sinatra::Base.set :raise_errors, true
 Sinatra::Base.set :logging, false
 
-require File.join(File.dirname(__FILE__), '../application')
+require_relative '../SusiWars'
 
 # establish in-memory database for testing
 DataMapper.setup(:default, "sqlite3::memory:")
