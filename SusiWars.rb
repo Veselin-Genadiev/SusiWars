@@ -118,7 +118,7 @@ module SusiWars
 
     get '/game_list' do
       @games = Game.open_games.map { |game| {id: game.id, owner: game.users.first.username} }
-      #@games = @games.select { |game| game.owner != cookies[:username] }
+      @games = @games.select { |game| game.owner != cookies[:username] }
       @games.to_json
     end
 
