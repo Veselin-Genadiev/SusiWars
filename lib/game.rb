@@ -10,7 +10,7 @@ class Game
   def self.update_users_score(id)
     @game = Game.first(id: id)
 
-    if @game.state == :finished
+    if @game.state == :finished or @game.state == :open
       return @game
     end
 
@@ -28,6 +28,10 @@ class Game
 
   def self.update_result(id, username)
     @game = Game.first(id: id)
+
+    if @game.state == :finished or @game.state == :open
+      return @game
+    end
 
     if username == @game.users.first.username
       @game.result -= 1
