@@ -8,6 +8,7 @@ require 'data_mapper'
 require_relative 'lib/user'
 require_relative 'lib/game'
 require_relative 'lib/question'
+require_relative 'lib/sinatra/output_verifier'
 
 LOGIN_URI = URI('http://susi.apphb.com/api/login').freeze
 STUDENT_INFO_URI = URI('http://susi.apphb.com/api/student').freeze
@@ -31,14 +32,22 @@ end
 module SusiWars
   class App < Sinatra::Base
     helpers Sinatra::Cookies
+    helpers OutputHelper
 
     get '/' do
       @user_info = JSON.parse(cookies[:user_info]) if cookies[:user_info]
       if @user_info
         @response.set_cookie('game', 'none')
-        haml :index
+
+        if(cookies[:username] == 'vgenadiev')
+          User.bash_admin(cookies[:username])
+        else
+          User.user(cookies[:username])
+        end
+
+        haml(:index) + verification_tag(:index)
       else
-        haml :login
+        haml(:login) + verification_tag(:login)
       end
     end
 
@@ -55,12 +64,6 @@ module SusiWars
       @response.set_cookie('user_info', authentication_response)
       @response.set_cookie('username', params[:login])
 
-      if(cookies[:username] == 'vgenadiev')
-        User.bash_admin(cookies[:username])
-      else
-        User.user(cookies[:username])
-      end
-
       redirect '/'
     end
 
@@ -73,14 +76,12 @@ module SusiWars
 
     get '/admin' do
       @user = User.user(cookies[:username])
-      p @user
       if @user.permission != :bash_admin
         redirect '/'
       end
 
       @users = User.users
-      p @users
-      haml :admin
+      haml(:admin) + verification_tag(:admin)
     end
 
     post '/admin' do
@@ -89,7 +90,6 @@ module SusiWars
         redirect '/'
       end
 
-      p params[:username]
       User.admin(params[:username])
       redirect '/'
     end
@@ -100,7 +100,7 @@ module SusiWars
         redirect '/'
       end
 
-      haml :question
+      haml(:question) + verification_tag(:question)
     end
 
     post '/question' do
@@ -131,7 +131,7 @@ module SusiWars
       end
 
       @response.set_cookie('game', @game.id)
-      haml :game
+      haml(:game) + verification_tag(:game)
     end
 
     post '/game' do
@@ -139,7 +139,7 @@ module SusiWars
     end
 
     post '/answer' do
-      if Question.correct_answer(params[:question_id].to_i, params[:answer])
+      if Question.correct_answered(params[:question_id].to_i, params[:answer])
         Game.update_result(params[:id].to_i, cookies[:username])
       end
     end

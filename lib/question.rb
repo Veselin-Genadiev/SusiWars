@@ -9,7 +9,7 @@ class Question
   property :fourth_answer, String
   property :correct_answer, String
 
-  belongs_to :game, required: false
+  has n, :games, through: Resource
 
   def self.correct_answered(question_id, answer)
     Question.first(id: question_id).correct_answer == answer

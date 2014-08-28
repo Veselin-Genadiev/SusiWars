@@ -4,7 +4,7 @@ class Game
   property :id, Serial
   property :state, Enum[:open, :closed, :finished], default: :open
   property :result, Integer, default: 0
-  has n, :questions
+  has n, :questions, through: Resource
   has n, :users
 
   def self.update_users_score(id)
@@ -13,6 +13,9 @@ class Game
     if @game.state == :finished or @game.state == :open
       return @game
     end
+
+    #unlink question relations
+    @game.game_questions.each { |link| link.destroy }
 
     if @game.result < 0
       @game.users.first.add_win
